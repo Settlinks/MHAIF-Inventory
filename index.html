@@ -1,327 +1,141 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>ERP Inventory | Company Portal</title>
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
-
     <style>
-        :root {
-
-            --brand-color: #0056b3;
-            /* Change this to your company primary color */
-
-        }
-
-
-
-        /* Logo Container Styling */
-
-        .header-container {
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            padding: 2rem 0;
-
-            text-align: center;
-
-        }
-
-
-
-        .company-logo {
-
-            max-width: 200px;
-
-            height: auto;
-
-            margin-bottom: 1rem;
-
-            filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.1));
-
-        }
-
-
-
-        .hidden {
-            display: none;
-        }
-
-
-
-        /* Modern Card Look */
-
-        .inventory-card {
-
-            background: #ffffff;
-
-            border-radius: 8px;
-
-            padding: 20px;
-
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-
-            margin-top: 20px;
-
-        }
-
-
-
-/* Main Table Styling */
-    table { 
-        width: 100%; 
-        border-collapse: collapse; 
-        min-width: 800px; /* Forces table to stay wide enough to be readable */
-    }
-
-    th { 
-        background-color: var(--brand-color); 
-        color: white; 
-        padding: 12px;
-        text-align: left;
-    }
-
-    td {
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-    }
-
-    /* Scrollable Container - This is what prevents the layout from breaking */
-    #inventory-list {
-        overflow-x: auto;
-        border: 1px solid #eee;
-        border-radius: 8px;
-        margin-top: 10px;
-        background: white;
-    }
-    
+        :root { --brand-color: #0056b3; }
+        .header-container { text-align: center; padding: 2rem 0; }
+        .company-logo { max-width: 200px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
+        .hidden { display: none; }
+        .inventory-card { background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
+        
+        /* Table Responsive Styles */
+        #inventory-list { overflow-x: auto; border: 1px solid #eee; border-radius: 8px; margin-top: 10px; background: white; }
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        th { background-color: var(--brand-color); color: white; padding: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
     </style>
-
 </head>
-
 <body>
 
-
-
     <div class="header-container">
-
-        <img src="https://static.wixstatic.com/media/2dd834_86e3b8f7ade04bd180292345eea5a1c0~mv2.png" id="main-logo" class="company-logo" alt="Company Logo">
-
-        <h1 id="app-title">Inventory Control System</h1>
-
+        <img src="https://static.wixstatic.com/media/2dd834_86e3b8f7ade04bd180292345eea5a1c0~mv2.png" class="company-logo">
+        <h1>Inventory Control System</h1>
     </div>
-
-
-
-    <hr>
-
-
 
     <div id="login-section" class="inventory-card">
-
-        <div style="text-align: center;">
-
-            <h3>Restricted Access</h3>
-
-            <p>Please enter your credentials to manage stock.</p>
-
-        </div>
-
         <input type="text" id="username" placeholder="Username">
-
         <input type="password" id="pin" placeholder="Access PIN">
-
         <button style="width: 100%;" onclick="loadInventory()">Authorize & Login</button>
-
     </div>
-
-
 
     <div id="main-section" class="hidden">
-
-        <div id="admin-controls" class="hidden inventory-card" style="background: #f4f7f6;">
-    <h3>Add New Inventory Item</h3>
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-        <input type="text" id="itemName" placeholder="Item Name">
-        <select id="itemCategory">
-            <option value="Storage">Storage</option>
-            <option value="Shipping">Shipping</option>
-            <option value="Quote">Quote</option>
-            <option value="Sale">Sale</option>
-        </select>
-        <input type="number" id="itemStock" placeholder="Stock Level">
-        
-        <input type="number" id="itemPrice" placeholder="Sale Price">
-        <input type="number" id="itemCost" placeholder="Unit Cost">
-        <select id="itemStatus">
-            <option value="Available">Available</option>
-            <option value="Low Stock">Low Stock</option>
-            <option value="Discontinued">Discontinued</option>
-        </select>
-        
-        <input type="text" id="itemWeight" placeholder="Weight (kg)">
-        <input type="text" id="itemSupplier" placeholder="Supplier/Vendor">
-        
-        <button style="grid-column: span 3; background-color: #28a745;" onclick="addItem()">
-            Register Item in System
-        </button>
-    </div>
-</div>
-
-
-
-        <div class="inventory-card">
-
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-
-                <h3>Current Inventory</h3>
-
-                <button class="ghost-button" onclick="loadInventory()">🔄 Refresh</button>
-
+        <div id="admin-controls" class="inventory-card" style="background: #f4f7f6;">
+            <h3>Register New Item</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                <input type="text" id="itemName" placeholder="Item Name">
+                <select id="itemCategory">
+                    <option value="Storage">Storage</option>
+                    <option value="Shipping">Shipping</option>
+                    <option value="Quote">Quote</option>
+                    <option value="Sale">Sale</option>
+                </select>
+                <input type="number" id="itemStock" placeholder="Stock Level">
+                <input type="number" id="itemPrice" placeholder="Sale Price">
+                <input type="number" id="itemCost" placeholder="Unit Cost">
+                <select id="itemStatus">
+                    <option value="Available">Available</option>
+                    <option value="Low Stock">Low Stock</option>
+                    <option value="Discontinued">Discontinued</option>
+                </select>
+                <input type="text" id="itemWeight" placeholder="Weight">
+                <input type="text" id="itemSupplier" placeholder="Supplier">
+                <button style="grid-column: span 3; background-color: #28a745;" onclick="addItem()">Add to Inventory</button>
             </div>
-
-            <div id="inventory-list">
-
-                <p>Authenticating...</p>
-
-            </div>
-
         </div>
 
+        <div class="inventory-card">
+            <div id="inventory-list">
+                <p>Loading...</p>
+            </div>
+        </div>
     </div>
 
-
-
-
-
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwff_RMm1iiAozutXws_gIwc5Qu4Xk4CNXp6PnX2m09C5kRG95lIlI6yDoFy4u_YpOq7g/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbwoOe699NFAKnVh7BUsKU9mbjZZijmCaHce2zPwU4OgSKL_bIdWTIoxjXZpm2f4fRekKg/exec"; 
 
         async function apiRequest(action, payload = {}) {
-            const userVal = document.getElementById('username').value;
-            const pinVal = document.getElementById('pin').value;
-
-            if (!userVal || !pinVal) {
-                alert("Please enter both Username and PIN");
-                return;
-            }
-
             const auth = {
-                username: userVal,
-                pin: pinVal
+                username: document.getElementById('username').value,
+                pin: document.getElementById('pin').value
             };
-
+            
             try {
-                // Using redirect: "follow" is key for Google Scripts
                 const response = await fetch(API_URL, {
                     method: "POST",
-                    mode: "cors",
-                    body: JSON.stringify({
-                        action,
-                        auth,
-                        payload
-                    })
+                    body: JSON.stringify({ action, auth, payload })
                 });
-
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error("Error:", error);
-                return "Auth Error";
+                return await response.json();
+            } catch (e) {
+                console.error(e);
+                return { error: "Connection Failed" };
             }
         }
 
         async function loadInventory() {
-            const inventoryDiv = document.getElementById('inventory-list');
-            inventoryDiv.innerHTML = "<p>Loading inventory data...</p>";
-
             const data = await apiRequest("READ");
+            if (data.error) return alert(data.error);
 
-            if (data === "Auth Error" || typeof data === 'string') {
-                alert("Access Denied: Check Username/PIN");
-                return;
-            }
-
-            // Show main app, hide login
             document.getElementById('login-section').classList.add('hidden');
             document.getElementById('main-section').classList.remove('hidden');
-            document.getElementById('admin-controls').classList.remove('hidden');
 
-            // Build Table
-            let html = "<table><thead><tr><th>ID</th><th>Name</th><th>Stock</th><th>Action</th></tr></thead><tbody>";
-
-            // data[0] is headers, so we start at index 1
-            for (let i = 1; i < data.length; i++) {
-                const row = data[i];
+            let html = `<table><tr><th>ID</th><th>Name</th><th>Category</th><th>Stock</th><th>Price</th><th>Cost</th><th>Status</th><th>Supplier</th><th>Action</th></tr>`;
+            data.slice(1).forEach(row => {
                 html += `<tr>
                     <td>${row[0]}</td>
-                    <td><strong>${row[1]}</strong></td>
+                    <td><b>${row[1]}</b></td>
+                    <td>${row[2]}</td>
                     <td>${row[3]}</td>
-                    <td><button style="background: #ff4444; border-color: #ff4444;" onclick="deleteItem('${row[0]}')">Delete</button></td>
+                    <td>$${row[4]}</td>
+                    <td>$${row[5]}</td>
+                    <td>${row[6]}</td>
+                    <td>${row[8]}</td>
+                    <td><button style="background:#ff4444; padding: 5px;" onclick="deleteItem('${row[0]}')">Delete</button></td>
                 </tr>`;
-            }
-
-            html += "</tbody></table>";
-            inventoryDiv.innerHTML = data.length > 1 ? html : "<p>No items found in inventory.</p>";
+            });
+            document.getElementById('inventory-list').innerHTML = html + "</table>";
         }
 
         async function addItem() {
-    const btn = document.querySelector("#admin-controls button");
-    
-    // Collect all data from the form
-    const payload = {
-        name: document.getElementById('itemName').value,
-        category: document.getElementById('itemCategory').value,
-        stock: document.getElementById('itemStock').value,
-        price: document.getElementById('itemPrice').value,
-        cost: document.getElementById('itemCost').value,
-        status: document.getElementById('itemStatus').value,
-        weight: document.getElementById('itemWeight').value,
-        supplier: document.getElementById('itemSupplier').value
-    };
+            const payload = {
+                name: document.getElementById('itemName').value,
+                category: document.getElementById('itemCategory').value,
+                stock: document.getElementById('itemStock').value,
+                price: document.getElementById('itemPrice').value,
+                cost: document.getElementById('itemCost').value,
+                status: document.getElementById('itemStatus').value,
+                weight: document.getElementById('itemWeight').value,
+                supplier: document.getElementById('itemSupplier').value
+            };
 
-    if (!payload.name || !payload.stock) {
-        alert("At minimum, Name and Stock are required.");
-        return;
-    }
-
-    btn.innerText = "Processing...";
-    btn.disabled = true;
-
-    const result = await apiRequest("CREATE", payload);
-
-    if (result && result.status === "Success") {
-        // Clear all inputs
-        document.querySelectorAll("#admin-controls input").forEach(el => el.value = "");
-        btn.innerText = "Register Item in System";
-        btn.disabled = false;
-        loadInventory(); // Refresh the table
-    } else {
-        alert("Failed to add item. Check Console.");
-        btn.disabled = false;
-    }
-}
+            const res = await apiRequest("CREATE", payload);
+            if (res.status === "Success") {
+                loadInventory();
+                document.querySelectorAll("#admin-controls input").forEach(i => i.value = "");
+            } else {
+                alert("Error adding item. Check console.");
+            }
+        }
 
         async function deleteItem(id) {
-            if (confirm("Permanently remove this item?")) {
-                await apiRequest("DELETE", {
-                    id: id
-                });
-                loadInventory(); // Refresh the list
+            if(confirm("Delete this item?")) {
+                await apiRequest("DELETE", { id });
+                loadInventory();
             }
         }
     </script>
 </body>
-
 </html>
