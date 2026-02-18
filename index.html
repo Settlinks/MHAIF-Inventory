@@ -11,8 +11,6 @@
         .company-logo { max-width: 200px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
         .hidden { display: none; }
         .inventory-card { background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
-        
-        /* Table Responsive Styles */
         #inventory-list { overflow-x: auto; border: 1px solid #eee; border-radius: 8px; margin-top: 10px; background: white; }
         table { width: 100%; border-collapse: collapse; min-width: 1000px; }
         th { background-color: var(--brand-color); color: white; padding: 12px; text-align: left; }
@@ -27,6 +25,7 @@
     </div>
 
     <div id="login-section" class="inventory-card">
+        <h3>Login</h3>
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="pin" placeholder="Access PIN">
         <button style="width: 100%;" onclick="loadInventory()">Authorize & Login</button>
@@ -59,20 +58,20 @@
 
         <div class="inventory-card">
             <div id="inventory-list">
-                <p>Loading...</p>
+                <p>Loading inventory...</p>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwoOe699NFAKnVh7BUsKU9mbjZZijmCaHce2zPwU4OgSKL_bIdWTIoxjXZpm2f4fRekKg/exec"; 
+        // PASTE YOUR NEW WEB APP URL BELOW
+        const API_URL = "https://script.google.com/macros/s/AKfycbzLykeScPyuld2tSK8uPR0RRQ638iReZGv4vdXqiICrg12-rqn-MnSsp5bFPKYJgbN92w/exec"; 
 
         async function apiRequest(action, payload = {}) {
             const auth = {
                 username: document.getElementById('username').value,
                 pin: document.getElementById('pin').value
             };
-            
             try {
                 const response = await fetch(API_URL, {
                     method: "POST",
@@ -110,6 +109,10 @@
         }
 
         async function addItem() {
+            const btn = document.querySelector("button[onclick='addItem()']");
+            btn.disabled = true;
+            btn.innerText = "Saving...";
+
             const payload = {
                 name: document.getElementById('itemName').value,
                 category: document.getElementById('itemCategory').value,
@@ -122,12 +125,14 @@
             };
 
             const res = await apiRequest("CREATE", payload);
-            if (res.status === "Success") {
+            if (res && res.status === "Success") {
                 loadInventory();
                 document.querySelectorAll("#admin-controls input").forEach(i => i.value = "");
             } else {
-                alert("Error adding item. Check console.");
+                alert("Error: " + (res.error || "Check script permissions"));
             }
+            btn.disabled = false;
+            btn.innerText = "Add to Inventory";
         }
 
         async function deleteItem(id) {
