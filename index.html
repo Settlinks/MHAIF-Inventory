@@ -78,15 +78,34 @@
 
 
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+/* Main Table Styling */
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        min-width: 800px; /* Forces table to stay wide enough to be readable */
+    }
 
-        th {
-            background-color: var(--brand-color);
-            color: white;
-        }
+    th { 
+        background-color: var(--brand-color); 
+        color: white; 
+        padding: 12px;
+        text-align: left;
+    }
+
+    td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    /* Scrollable Container - This is what prevents the layout from breaking */
+    #inventory-list {
+        overflow-x: auto;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        margin-top: 10px;
+        background: white;
+    }
+    
     </style>
 
 </head>
@@ -131,21 +150,34 @@
 
     <div id="main-section" class="hidden">
 
-        <div id="admin-controls" class="hidden inventory-card" style="background: #f9f9f9;">
-
-            <h3>Add New Item</h3>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px;">
-
-                <input type="text" id="itemName" placeholder="Item Name">
-
-                <input type="number" id="itemStock" placeholder="Initial Qty">
-
-                <button onclick="addItem()">Add Item</button>
-
-            </div>
-
-        </div>
+        <div id="admin-controls" class="hidden inventory-card" style="background: #f4f7f6;">
+    <h3>Add New Inventory Item</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+        <input type="text" id="itemName" placeholder="Item Name">
+        <select id="itemCategory">
+            <option value="Storage">Storage</option>
+            <option value="Shipping">Shipping</option>
+            <option value="Quote">Quote</option>
+            <option value="Sale">Sale</option>
+        </select>
+        <input type="number" id="itemStock" placeholder="Stock Level">
+        
+        <input type="number" id="itemPrice" placeholder="Sale Price">
+        <input type="number" id="itemCost" placeholder="Unit Cost">
+        <select id="itemStatus">
+            <option value="Available">Available</option>
+            <option value="Low Stock">Low Stock</option>
+            <option value="Discontinued">Discontinued</option>
+        </select>
+        
+        <input type="text" id="itemWeight" placeholder="Weight (kg)">
+        <input type="text" id="itemSupplier" placeholder="Supplier/Vendor">
+        
+        <button style="grid-column: span 3; background-color: #28a745;" onclick="addItem()">
+            Register Item in System
+        </button>
+    </div>
+</div>
 
 
 
@@ -174,7 +206,7 @@
 
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbw_SvBtgR6XcTrIy--Xq7LldypB-s0b9pNqc_ngsy7gsYWzndnV5MCqm8u2QXsB-_r4HQ/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbwff_RMm1iiAozutXws_gIwc5Qu4Xk4CNXp6PnX2m09C5kRG95lIlI6yDoFy4u_YpOq7g/exec";
 
         async function apiRequest(action, payload = {}) {
             const userVal = document.getElementById('username').value;
@@ -245,31 +277,41 @@
         }
 
         async function addItem() {
-            const nameInput = document.getElementById('itemName');
-            const stockInput = document.getElementById('itemStock');
-            const btn = document.querySelector("#admin-controls button");
+    const btn = document.querySelector("#admin-controls button");
+    
+    // Collect all data from the form
+    const payload = {
+        name: document.getElementById('itemName').value,
+        category: document.getElementById('itemCategory').value,
+        stock: document.getElementById('itemStock').value,
+        price: document.getElementById('itemPrice').value,
+        cost: document.getElementById('itemCost').value,
+        status: document.getElementById('itemStatus').value,
+        weight: document.getElementById('itemWeight').value,
+        supplier: document.getElementById('itemSupplier').value
+    };
 
-            if (!nameInput.value || !stockInput.value) {
-                alert("Please fill in Name and Stock");
-                return;
-            }
+    if (!payload.name || !payload.stock) {
+        alert("At minimum, Name and Stock are required.");
+        return;
+    }
 
-            btn.innerText = "Saving...";
-            btn.disabled = true;
+    btn.innerText = "Processing...";
+    btn.disabled = true;
 
-            await apiRequest("CREATE", {
-                name: nameInput.value,
-                category: "General",
-                stock: stockInput.value
-            });
+    const result = await apiRequest("CREATE", payload);
 
-            nameInput.value = "";
-            stockInput.value = "";
-            btn.innerText = "Add Item";
-            btn.disabled = false;
-
-            loadInventory(); // Refresh the list
-        }
+    if (result && result.status === "Success") {
+        // Clear all inputs
+        document.querySelectorAll("#admin-controls input").forEach(el => el.value = "");
+        btn.innerText = "Register Item in System";
+        btn.disabled = false;
+        loadInventory(); // Refresh the table
+    } else {
+        alert("Failed to add item. Check Console.");
+        btn.disabled = false;
+    }
+}
 
         async function deleteItem(id) {
             if (confirm("Permanently remove this item?")) {
