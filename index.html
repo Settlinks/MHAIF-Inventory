@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Inventory | Company Portal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
+    <style>
+        :root {
+            --brand-color: #0056b3; /* Change this to your company primary color */
+        }
+        
+        /* Logo Container Styling */
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .company-logo {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .hidden { display: none; }
+        
+        /* Modern Card Look */
+        .inventory-card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: var(--brand-color); color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <img src="https://static.wixstatic.com/media/2dd834_86e3b8f7ade04bd180292345eea5a1c0~mv2.png" 
+             id="main-logo" 
+             class="company-logo" 
+             alt="Company Logo">
+        <h1 id="app-title">Inventory Control System</h1>
+    </div>
+
+    <hr>
+
+    <div id="login-section" class="inventory-card">
+        <div style="text-align: center;">
+            <h3>Restricted Access</h3>
+            <p>Please enter your credentials to manage stock.</p>
+        </div>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="pin" placeholder="Access PIN">
+        <button style="width: 100%;" onclick="loadInventory()">Authorize & Login</button>
+    </div>
+
+    <div id="main-section" class="hidden">
+        <div id="admin-controls" class="hidden inventory-card" style="background: #f9f9f9;">
+            <h3>Add New Item</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px;">
+                <input type="text" id="itemName" placeholder="Item Name">
+                <input type="number" id="itemStock" placeholder="Initial Qty">
+                <button onclick="addItem()">Add Item</button>
+            </div>
+        </div>
+
+        <div class="inventory-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Current Inventory</h3>
+                <button class="ghost-button" onclick="loadInventory()">🔄 Refresh</button>
+            </div>
+            <div id="inventory-list">
+                <p>Authenticating...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Use the same API_URL and functions from the previous code block here...
+    </script>
+</body>
+</html>
