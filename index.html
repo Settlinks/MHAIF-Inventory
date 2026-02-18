@@ -1,121 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP Inventory | Company Portal</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
-    <style>
-        :root {
-            --brand-color: #0056b3; /* Change this to your company primary color */
-        }
-        
-        /* Logo Container Styling */
-        .header-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem 0;
-            text-align: center;
-        }
+<script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwGgheg5Mkvw037GMx_JYeLesxzTvKV614K7_oKpmOokFtBGcTtKdYM77hKnpDvsUSBGg/exec"; 
 
-        .company-logo {
-            max-width: 200px;
-            height: auto;
-            margin-bottom: 1rem;
-            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));
-        }
+        async function apiRequest(action, payload = {}) {
+            const userVal = document.getElementById('username').value;
+            const pinVal = document.getElementById('pin').value;
 
-        .hidden { display: none; }
-        
-        /* Modern Card Look */
-        .inventory-card {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-top: 20px;
+            if (!userVal || !pinVal) {
+                alert("Please enter both Username and PIN");
+                return;
+            }
+
+            const auth = { username: userVal, pin: pinVal };
+            
+            try {
+                // Using redirect: "follow" is key for Google Scripts
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    mode: "cors", 
+                    body: JSON.stringify({ action, auth, payload })
+                });
+                
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error("Error:", error);
+                return "Auth Error";
+            }
         }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { background-color: var(--brand-color); color: white; }
-    </style>
-</head>
-<body>
+        async function loadInventory() {
+            const inventoryDiv = document.getElementById('inventory-list');
+            inventoryDiv.innerHTML = "<p>Loading inventory data...</p>";
 
-    <div class="header-container">
-        <img src="https://static.wixstatic.com/media/2dd834_86e3b8f7ade04bd180292345eea5a1c0~mv2.png" 
-             id="main-logo" 
-             class="company-logo" 
-             alt="Company Logo">
-        <h1 id="app-title">Inventory Control System</h1>
-    </div>
+            const data = await apiRequest("READ");
+            
+            if (data === "Auth Error" || typeof data === 'string') {
+                alert("Access Denied: Check Username/PIN");
+                return;
+            }
 
-    <hr>
+            // Show main app, hide login
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('main-section').classList.remove('hidden');
+            document.getElementById('admin-controls').classList.remove('hidden');
 
-    <div id="login-section" class="inventory-card">
-        <div style="text-align: center;">
-            <h3>Restricted Access</h3>
-            <p>Please enter your credentials to manage stock.</p>
-        </div>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="pin" placeholder="Access PIN">
-        <button style="width: 100%;" onclick="loadInventory()">Authorize & Login</button>
-    </div>
+            // Build Table
+            let html = "<table><thead><tr><th>ID</th><th>Name</th><th>Stock</th><th>Action</th></tr></thead><tbody>";
+            
+            // data[0] is headers, so we start at index 1
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                html += `<tr>
+                    <td>${row[0]}</td>
+                    <td><strong>${row[1]}</strong></td>
+                    <td>${row[3]}</td>
+                    <td><button style="background: #ff4444; border-color: #ff4444;" onclick="deleteItem('${row[0]}')">Delete</button></td>
+                </tr>`;
+            }
+            
+            html += "</tbody></table>";
+            inventoryDiv.innerHTML = data.length > 1 ? html : "<p>No items found in inventory.</p>";
+        }
 
-    <div id="main-section" class="hidden">
-        <div id="admin-controls" class="hidden inventory-card" style="background: #f9f9f9;">
-            <h3>Add New Item</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px;">
-                <input type="text" id="itemName" placeholder="Item Name">
-                <input type="number" id="itemStock" placeholder="Initial Qty">
-                <button onclick="addItem()">Add Item</button>
-            </div>
-        </div>
+        async function addItem() {
+            const nameInput = document.getElementById('itemName');
+            const stockInput = document.getElementById('itemStock');
+            const btn = document.querySelector("#admin-controls button");
 
-        <div class="inventory-card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3>Current Inventory</h3>
-                <button class="ghost-button" onclick="loadInventory()">🔄 Refresh</button>
-            </div>
-            <div id="inventory-list">
-                <p>Authenticating...</p>
-            </div>
-        </div>
-    </div>
+            if (!nameInput.value || !stockInput.value) {
+                alert("Please fill in Name and Stock");
+                return;
+            }
 
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbzrqkiOJx8od3o0iUEU9n8nQSCUnLsbbLjB-OYLeEMQHuPjtpedOIhMc1Q3hyCGBi2uCQ/exec"; // PASTE YOUR URL HERE
+            btn.innerText = "Saving...";
+            btn.disabled = true;
 
-async function apiRequest(action, payload = {}) {
-    const userVal = document.getElementById('username').value;
-    const pinVal = document.getElementById('pin').value;
+            await apiRequest("CREATE", { 
+                name: nameInput.value, 
+                category: "General", 
+                stock: stockInput.value 
+            });
 
-    if (!userVal || !pinVal) {
-        alert("Please enter both Username and PIN");
-        return;
-    }
+            nameInput.value = "";
+            stockInput.value = "";
+            btn.innerText = "Add Item";
+            btn.disabled = false;
 
-    const auth = {
-        username: userVal,
-        pin: pinVal
-    };
-    
-    try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            // We use text/plain to avoid pre-flight CORS issues with Apps Script
-            body: JSON.stringify({ action, auth, payload })
-        });
-        
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        return await response.json();
-    } catch (error) {
-        console.error("Error:", error);
-        return "Connection Error: Check Console";
-    }
-}
+            loadInventory(); // Refresh the list
+        }
+
+        async function deleteItem(id) {
+            if(confirm("Permanently remove this item?")) {
+                await apiRequest("DELETE", { id: id });
+                loadInventory(); // Refresh the list
+            }
+        }
     </script>
 </body>
 </html>
