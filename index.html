@@ -85,58 +85,37 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbysUfVSdYUs6gCdYH5msLFpHJ1BfTTiPkLUtM3j4H73_niohxYr7kiCx07SCAKXwI9tOw/exec"; // PASTE YOUR URL HERE
+        const API_URL = "https://script.google.com/macros/s/AKfycbzrqkiOJx8od3o0iUEU9n8nQSCUnLsbbLjB-OYLeEMQHuPjtpedOIhMc1Q3hyCGBi2uCQ/exec"; // PASTE YOUR URL HERE
 
-        async function apiRequest(action, payload = {}) {
-            const auth = {
-                username: document.getElementById('username').value,
-                pin: document.getElementById('pin').value
-            };
-            
-            const response = await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({ action, auth, payload })
-            });
-            return await response.json();
-        }
+async function apiRequest(action, payload = {}) {
+    const userVal = document.getElementById('username').value;
+    const pinVal = document.getElementById('pin').value;
 
-        async function loadInventory() {
-            const data = await apiRequest("READ");
-            if (typeof data === 'string') return alert(data);
+    if (!userVal || !pinVal) {
+        alert("Please enter both Username and PIN");
+        return;
+    }
 
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('main-section').classList.remove('hidden');
-            
-            // Basic Role UI Logic
-            // In a real app, the server handles the actual security; this is just for UI
-            document.getElementById('admin-controls').classList.remove('hidden');
-
-            let html = "<table><tr><th>ID</th><th>Name</th><th>Stock</th><th>Action</th></tr>";
-            data.slice(1).forEach(row => {
-                html += `<tr>
-                    <td>${row[0]}</td>
-                    <td>${row[1]}</td>
-                    <td>${row[3]}</td>
-                    <td><button onclick="deleteItem('${row[0]}')">Delete</button></td>
-                </tr>`;
-            });
-            html += "</table>";
-            document.getElementById('inventory-list').innerHTML = html;
-        }
-
-        async function addItem() {
-            const name = document.getElementById('itemName').value;
-            const stock = document.getElementById('itemStock').value;
-            await apiRequest("CREATE", { name, category: "General", stock, price: 0 });
-            loadInventory();
-        }
-
-        async function deleteItem(id) {
-            if(confirm("Are you sure?")) {
-                await apiRequest("DELETE", { id });
-                loadInventory();
-            }
-        }
+    const auth = {
+        username: userVal,
+        pin: pinVal
+    };
+    
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            // We use text/plain to avoid pre-flight CORS issues with Apps Script
+            body: JSON.stringify({ action, auth, payload })
+        });
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        return await response.json();
+    } catch (error) {
+        console.error("Error:", error);
+        return "Connection Error: Check Console";
+    }
+}
     </script>
 </body>
 </html>
