@@ -3,67 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP Inventory | Secure Portal</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
-    <style>
-        :root { --brand-color: #0056b3; }
-        body { max-width: 100% !important; margin: 0; padding: 15px; width: 100%; box-sizing: border-box; }
-        .header-container { text-align: center; padding: 1rem 0; }
-        .company-logo { max-width: 180px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
-        .hidden { display: none; }
-        .inventory-card { background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; width: 100%; box-sizing: border-box; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; width: 100%; }
-        #add-btn { grid-column: 1 / -1; background-color: #28a745; color: white; padding: 12px; font-weight: bold; border: none; border-radius: 4px; }
-        #inventory-list { overflow-x: auto; width: 100%; border: 1px solid #eee; border-radius: 8px; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; }
-        th { background-color: var(--brand-color); color: white; padding: 12px; text-align: left; }
-        td { padding: 10px; border-bottom: 1px solid #eee; }
-    </style>
+    <title>ERP Inventory Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen font-sans">
 
-    <div class="header-container">
-        <img src="https://static.wixstatic.com/media/2dd834_86e3b8f7ade04bd180292345eea5a1c0~mv2.png" class="company-logo">
-        <h1>Inventory Control</h1>
-    </div>
+    <header class="bg-white border-b border-gray-200 py-4 mb-6 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center">
+            <img src="https://static.wixstatic.com/media/2dd834_86e3b8f7ade04bd180292345eea5a1c0~mv2.png" class="h-12 mb-2">
+            <h1 class="text-xl font-bold text-gray-800 uppercase tracking-widest">Inventory Management</h1>
+        </div>
+    </header>
 
-    <div id="login-section" class="inventory-card">
-        <h3>Two-Factor Authentication</h3>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="pin" placeholder="Access PIN">
-        <input type="text" id="otpCode" placeholder="6-Digit Authenticator Code" maxlength="6">
-        <button style="width: 100%;" onclick="doLogin()">Secure Login</button>
-    </div>
+    <main class="max-w-7xl mx-auto px-4 pb-12">
 
-    <div id="main-section" class="hidden">
-        <div id="admin-controls" class="inventory-card" style="background: #f4f7f6;">
-            <h3>Register New Item</h3>
-            <div class="grid-container">
-                <input type="text" id="itemName" placeholder="Item Name">
-                <select id="itemCategory">
-                    <option value="Storage">Storage</option>
-                    <option value="Shipping">Shipping</option>
-                    <option value="Quote">Quote</option>
-                    <option value="Sale">Sale</option>
-                </select>
-                <input type="number" id="itemStock" placeholder="Stock Level">
-                <input type="number" id="itemPrice" placeholder="Sale Price">
-                <input type="number" id="itemCost" placeholder="Unit Cost">
-                <select id="itemStatus">
-                    <option value="Available">Available</option>
-                    <option value="Low Stock">Low Stock</option>
-                    <option value="Discontinued">Discontinued</option>
-                </select>
-                <input type="text" id="itemWeight" placeholder="Weight">
-                <input type="text" id="itemSupplier" placeholder="Supplier">
-                <button id="add-btn" onclick="addItem()">Add to Inventory</button>
+        <div id="login-section" class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100 mt-10">
+            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-700">Secure Access</h2>
+            <div class="space-y-4">
+                <input type="text" id="username" placeholder="Username" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="password" id="pin" placeholder="Access PIN" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="otpCode" placeholder="2FA Authenticator Code" maxlength="6" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <button onclick="doLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition duration-200 shadow-md">
+                    <i class="fa-solid fa-shield-halved mr-2"></i> Authorize & Enter
+                </button>
             </div>
         </div>
 
-        <div class="inventory-card">
-            <div id="inventory-list"><p>Loading...</p></div>
+        <div id="main-section" class="hidden space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 uppercase font-bold">Total Items</p>
+                        <h3 id="stat-total-items" class="text-3xl font-bold">0</h3>
+                    </div>
+                    <i class="fa-solid fa-boxes-stacked text-blue-100 text-4xl"></i>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 uppercase font-bold">Inventory Value</p>
+                        <h3 id="stat-total-value" class="text-3xl font-bold">$0</h3>
+                    </div>
+                    <i class="fa-solid fa-sack-dollar text-green-100 text-4xl"></i>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-500 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 uppercase font-bold">Low Stock Alerts</p>
+                        <h3 id="stat-low-stock" class="text-3xl font-bold">0</h3>
+                    </div>
+                    <i class="fa-solid fa-triangle-exclamation text-orange-100 text-4xl"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold mb-4 text-gray-700"><i class="fa-solid fa-plus-circle mr-2 text-blue-500"></i>Register New Item</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <input type="text" id="itemName" placeholder="Item Name" class="p-2 border rounded-md">
+                    <select id="itemCategory" class="p-2 border rounded-md">
+                        <option value="Storage">Storage</option>
+                        <option value="Shipping">Shipping</option>
+                        <option value="Quote">Quote</option>
+                        <option value="Sale">Sale</option>
+                    </select>
+                    <input type="number" id="itemStock" placeholder="Stock Level" class="p-2 border rounded-md">
+                    <input type="number" id="itemPrice" placeholder="Sale Price" class="p-2 border rounded-md">
+                    <input type="number" id="itemCost" placeholder="Unit Cost" class="p-2 border rounded-md">
+                    <select id="itemStatus" class="p-2 border rounded-md">
+                        <option value="Available">Available</option>
+                        <option value="Low Stock">Low Stock</option>
+                        <option value="Discontinued">Discontinued</option>
+                    </select>
+                    <input type="text" id="itemWeight" placeholder="Weight" class="p-2 border rounded-md">
+                    <input type="text" id="itemSupplier" placeholder="Supplier" class="p-2 border rounded-md">
+                    <button id="add-btn" onclick="addItem()" class="md:col-span-4 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold transition">
+                        Add to Database
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+                    <h3 class="font-bold text-gray-700">Current Stock</h3>
+                    <div class="relative">
+                        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search..." class="pl-8 pr-4 py-1 border rounded-full text-sm outline-none focus:ring-2 focus:ring-blue-400">
+                        <i class="fa-solid fa-search absolute left-3 top-2 text-gray-400 text-xs"></i>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 text-xs uppercase tracking-wider">
+                                <th class="p-4">ID</th>
+                                <th class="p-4">Item Name</th>
+                                <th class="p-4">Category</th>
+                                <th class="p-4">Stock</th>
+                                <th class="p-4">Price</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body" class="text-sm text-gray-700 divide-y divide-gray-100">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbyA-TjXiKdnS_NtqrieV1w4rZW8dWn-gzGhE8M3TNLsSqq8PpgN4-CsNyDybAqsJtC_ew/exec";
@@ -100,17 +146,56 @@
             const data = await apiRequest("READ");
             if (data.error) return alert("Session Error: " + data.error);
 
-            let html = `<table><tr><th>ID</th><th>Name</th><th>Category</th><th>Stock</th><th>Price</th><th>Cost</th><th>Status</th><th>Supplier</th><th>Action</th></tr>`;
+            const tableBody = document.getElementById('inventory-table-body');
+            let rowsHtml = "";
+            let totalVal = 0;
+            let lowStockCount = 0;
+
             data.slice(1).forEach(row => {
-                html += `<tr><td>${row[0]}</td><td><b>${row[1]}</b></td><td>${row[2]}</td><td>${row[3]}</td><td>$${row[4]}</td><td>$${row[5]}</td><td>${row[6]}</td><td>${row[8]}</td><td><button style="background:#ff4444;padding:5px;" onclick="deleteItem('${row[0]}')">Delete</button></td></tr>`;
+                const stock = parseInt(row[3]) || 0;
+                const price = parseFloat(row[4]) || 0;
+                const status = row[6];
+                totalVal += (stock * price);
+                if (status === "Low Stock") lowStockCount++;
+
+                const statusColor = status === "Available" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700";
+
+                rowsHtml += `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-4 text-gray-400 font-mono text-xs">${row[0]}</td>
+                        <td class="p-4 font-semibold">${row[1]}</td>
+                        <td class="p-4"><span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs">${row[2]}</span></td>
+                        <td class="p-4 font-bold">${stock}</td>
+                        <td class="p-4 text-gray-500">$${price.toFixed(2)}</td>
+                        <td class="p-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${statusColor}">${status}</span></td>
+                        <td class="p-4 text-center">
+                            <button onclick="deleteItem('${row[0]}')" class="text-red-400 hover:text-red-600 transition">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
             });
-            document.getElementById('inventory-list').innerHTML = html + "</table>";
+
+            tableBody.innerHTML = rowsHtml;
+            document.getElementById('stat-total-items').innerText = data.length - 1;
+            document.getElementById('stat-total-value').innerText = `$${totalVal.toLocaleString()}`;
+            document.getElementById('stat-low-stock').innerText = lowStockCount;
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll("#inventory-table-body tr");
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? "" : "none";
+            });
         }
 
         async function addItem() {
-            const btn = document.querySelector("#add-btn");
+            const btn = document.getElementById("add-btn");
             btn.disabled = true;
-            btn.innerText = "Authorizing...";
+            btn.innerText = "Processing...";
 
             const payload = {
                 name: document.getElementById('itemName').value,
@@ -125,18 +210,17 @@
 
             const res = await apiRequest("CREATE", payload);
             if (res.status === "Success") {
-                alert("Item Added!");
                 loadInventory();
                 document.querySelectorAll("#admin-controls input").forEach(i => i.value = "");
             } else {
                 alert("Error: " + res.error);
             }
             btn.disabled = false;
-            btn.innerText = "Add to Inventory";
+            btn.innerText = "Add to Database";
         }
 
         async function deleteItem(id) {
-            if(confirm("Delete item?")) { 
+            if(confirm("Permanently delete this item?")) { 
                 await apiRequest("DELETE", { id });
                 loadInventory(); 
             }
