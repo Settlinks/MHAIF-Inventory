@@ -5,18 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ERP Inventory | Company Portal</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
-    <style>
-        :root { --brand-color: #0056b3; }
-        .header-container { text-align: center; padding: 2rem 0; }
-        .company-logo { max-width: 200px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
-        .hidden { display: none; }
-        .inventory-card { background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
-        
-        #inventory-list { overflow-x: auto; border: 1px solid #eee; border-radius: 8px; margin-top: 10px; background: white; }
-        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
-        th { background-color: var(--brand-color); color: white; padding: 12px; text-align: left; }
-        td { padding: 10px; border-bottom: 1px solid #eee; }
-    </style>
+<style>
+    :root { --brand-color: #0056b3; }
+
+    /* Force the body to use 100% of the screen width */
+    body { 
+        max-width: 100% !important; 
+        margin: 0; 
+        padding: 20px; 
+        width: 100%;
+    }
+
+    .header-container { text-align: center; padding: 1rem 0; }
+    .company-logo { max-width: 200px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
+    .hidden { display: none; }
+
+    /* Expand cards to full width */
+    .inventory-card { 
+        background: #ffffff; 
+        border-radius: 8px; 
+        padding: 20px; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+        margin-top: 20px;
+        width: 100%; /* Ensures card hits both edges */
+        box-sizing: border-box;
+    }
+    
+    /* Responsive Grid: 1 column on mobile, 3 columns on desktop */
+    #admin-controls .grid-container {
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+        gap: 15px;
+    }
+
+    /* Table Container with automatic horizontal scroll */
+    #inventory-list { 
+        overflow-x: auto; 
+        border: 1px solid #eee; 
+        border-radius: 8px; 
+        margin-top: 10px; 
+        background: white;
+        width: 100%;
+    }
+
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        min-width: 1000px; /* Maintains readability; user scrolls on small screens */
+    }
+
+    th { background-color: var(--brand-color); color: white; padding: 12px; text-align: left; }
+    td { padding: 10px; border-bottom: 1px solid #eee; }
+
+    /* Mobile adjustments */
+    @media (max-width: 600px) {
+        body { padding: 10px; }
+        .inventory-card { padding: 15px; }
+    }
+</style>
 </head>
 <body>
 
@@ -35,6 +81,9 @@
     <div id="main-section" class="hidden">
         <div id="admin-controls" class="inventory-card" style="background: #f4f7f6;">
             <h3>Register New Item</h3>
+            <div class="grid-container">
+                
+                
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
                 <input type="text" id="itemName" placeholder="Item Name">
                 <select id="itemCategory">
@@ -54,6 +103,7 @@
                 <input type="text" id="itemWeight" placeholder="Weight">
                 <input type="text" id="itemSupplier" placeholder="Supplier">
                 <button style="grid-column: span 3; background-color: #28a745;" onclick="addItem()">Add to Inventory</button>
+            </div>
             </div>
         </div>
 
