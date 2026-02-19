@@ -3,145 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP Inventory | Company Portal</title>
+    <title>ERP Inventory | Secure Portal</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
-<style>
-    :root { --brand-color: #0056b3; }
-
-    body { 
-        max-width: 100% !important; 
-        margin: 0; 
-        padding: 10px; 
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .header-container { text-align: center; padding: 1rem 0; }
-    .company-logo { max-width: 200px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
-    .hidden { display: none; }
-
-    .inventory-card { 
-        background: #ffffff; 
-        border-radius: 8px; 
-        padding: 15px; 
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
-        margin-top: 15px;
-        width: 100%; 
-        box-sizing: border-box;
-    }
-
-    /* This handles the automatic column wrapping */
-    .grid-container {
-        display: grid; 
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-        gap: 12px;
-        width: 100%;
-    }
-
-    .grid-container input, 
-    .grid-container select {
-        width: 100%;
-        margin: 0;
-        box-sizing: border-box;
-    }
-
-    /* Target the button by its ID */
-    #add-btn {
-        grid-column: 1 / -1; 
-        background-color: #28a745;
-        color: white;
-        padding: 12px;
-        font-weight: bold;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    #inventory-list { 
-        overflow-x: auto; 
-        width: 100%;
-        -webkit-overflow-scrolling: touch;
-        border: 1px solid #eee;
-        border-radius: 8px;
-        background: white;
-    }
-
-    table { width: 100%; border-collapse: collapse; min-width: 800px; }
-    th { background-color: var(--brand-color); color: white; padding: 12px; text-align: left; }
-    td { padding: 10px; border-bottom: 1px solid #eee; }
-</style>
+    <style>
+        :root { --brand-color: #0056b3; }
+        body { max-width: 100% !important; margin: 0; padding: 15px; width: 100%; box-sizing: border-box; }
+        .header-container { text-align: center; padding: 1rem 0; }
+        .company-logo { max-width: 180px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
+        .hidden { display: none; }
+        .inventory-card { background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; width: 100%; box-sizing: border-box; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; width: 100%; }
+        #add-btn { grid-column: 1 / -1; background-color: #28a745; color: white; padding: 12px; font-weight: bold; border: none; border-radius: 4px; }
+        #inventory-list { overflow-x: auto; width: 100%; border: 1px solid #eee; border-radius: 8px; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { background-color: var(--brand-color); color: white; padding: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
+    </style>
 </head>
 <body>
 
     <div class="header-container">
         <img src="https://static.wixstatic.com/media/2dd834_86e3b8f7ade04bd180292345eea5a1c0~mv2.png" class="company-logo">
-        <h1>Inventory Control System</h1>
+        <h1>Inventory Control</h1>
     </div>
 
     <div id="login-section" class="inventory-card">
-        <h3>Login</h3>
+        <h3>Two-Factor Authentication</h3>
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="pin" placeholder="Access PIN">
-        <button style="width: 100%;" onclick="loadInventory()">Authorize & Login</button>
+        <input type="text" id="otpCode" placeholder="6-Digit Authenticator Code" maxlength="6">
+        <button style="width: 100%;" onclick="loadInventory()">Secure Login</button>
     </div>
 
     <div id="main-section" class="hidden">
         <div id="admin-controls" class="inventory-card" style="background: #f4f7f6;">
-    <h3>Register New Item</h3>
-    <div class="grid-container">
-        <input type="text" id="itemName" placeholder="Item Name">
-        <select id="itemCategory">
-            <option value="Storage">Storage</option>
-            <option value="Shipping">Shipping</option>
-            <option value="Quote">Quote</option>
-            <option value="Sale">Sale</option>
-        </select>
-        <input type="number" id="itemStock" placeholder="Stock Level">
-        <input type="number" id="itemPrice" placeholder="Sale Price">
-        <input type="number" id="itemCost" placeholder="Unit Cost">
-        <select id="itemStatus">
-            <option value="Available">Available</option>
-            <option value="Low Stock">Low Stock</option>
-            <option value="Discontinued">Discontinued</option>
-        </select>
-        <input type="text" id="itemWeight" placeholder="Weight">
-        <input type="text" id="itemSupplier" placeholder="Supplier">
-        <button id="add-btn" onclick="addItem()">Add to Inventory</button>
-    </div>
-</div>
+            <h3>Register New Item</h3>
+            <div class="grid-container">
+                <input type="text" id="itemName" placeholder="Item Name">
+                <select id="itemCategory">
+                    <option value="Storage">Storage</option>
+                    <option value="Shipping">Shipping</option>
+                    <option value="Quote">Quote</option>
+                    <option value="Sale">Sale</option>
+                </select>
+                <input type="number" id="itemStock" placeholder="Stock Level">
+                <input type="number" id="itemPrice" placeholder="Sale Price">
+                <input type="number" id="itemCost" placeholder="Unit Cost">
+                <select id="itemStatus">
+                    <option value="Available">Available</option>
+                    <option value="Low Stock">Low Stock</option>
+                    <option value="Discontinued">Discontinued</option>
+                </select>
+                <input type="text" id="itemWeight" placeholder="Weight">
+                <input type="text" id="itemSupplier" placeholder="Supplier">
+                <button id="add-btn" onclick="addItem()">Add to Inventory</button>
+            </div>
+        </div>
 
         <div class="inventory-card">
-            <div class="inventory-card">
-    <input type="text" id="searchInput" placeholder="Search by name or supplier..." onkeyup="filterTable()">
-    <div id="inventory-list">
-        <p>Loading inventory...</p>
-    </div>
-</div>
-            <div id="inventory-list">
-                <p>Loading inventory...</p>
-            </div>
+            <div id="inventory-list"><p>Loading...</p></div>
         </div>
     </div>
 
     <script>
-        // PASTE YOUR NEW WEB APP URL BELOW
-        const API_URL = "https://script.google.com/macros/s/AKfycbzLykeScPyuld2tSK8uPR0RRQ638iReZGv4vdXqiICrg12-rqn-MnSsp5bFPKYJgbN92w/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbzvrHqRiKVZHVqPtkML2UipyObPHZXhsysKs810wNuZeOyrYQ5hngBIXViqdYB13_t3BA/exec"; 
 
         async function apiRequest(action, payload = {}) {
             const auth = {
                 username: document.getElementById('username').value,
-                pin: document.getElementById('pin').value
+                pin: document.getElementById('pin').value,
+                otpCode: document.getElementById('otpCode').value
             };
-            try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    body: JSON.stringify({ action, auth, payload })
-                });
-                return await response.json();
-            } catch (e) {
-                console.error(e);
-                return { error: "Connection Failed" };
-            }
+            const response = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action, auth, payload }) });
+            return await response.json();
         }
 
         async function loadInventory() {
@@ -153,26 +87,12 @@
 
             let html = `<table><tr><th>ID</th><th>Name</th><th>Category</th><th>Stock</th><th>Price</th><th>Cost</th><th>Status</th><th>Supplier</th><th>Action</th></tr>`;
             data.slice(1).forEach(row => {
-                html += `<tr>
-                    <td>${row[0]}</td>
-                    <td><b>${row[1]}</b></td>
-                    <td>${row[2]}</td>
-                    <td>${row[3]}</td>
-                    <td>$${row[4]}</td>
-                    <td>$${row[5]}</td>
-                    <td>${row[6]}</td>
-                    <td>${row[8]}</td>
-                    <td><button style="background:#ff4444; padding: 5px;" onclick="deleteItem('${row[0]}')">Delete</button></td>
-                </tr>`;
+                html += `<tr><td>${row[0]}</td><td><b>${row[1]}</b></td><td>${row[2]}</td><td>${row[3]}</td><td>$${row[4]}</td><td>$${row[5]}</td><td>${row[6]}</td><td>${row[8]}</td><td><button style="background:#ff4444;padding:5px;" onclick="deleteItem('${row[0]}')">Delete</button></td></tr>`;
             });
             document.getElementById('inventory-list').innerHTML = html + "</table>";
         }
 
         async function addItem() {
-            const btn = document.querySelector("button[onclick='addItem()']");
-            btn.disabled = true;
-            btn.innerText = "Saving...";
-
             const payload = {
                 name: document.getElementById('itemName').value,
                 category: document.getElementById('itemCategory').value,
@@ -183,41 +103,14 @@
                 weight: document.getElementById('itemWeight').value,
                 supplier: document.getElementById('itemSupplier').value
             };
-
             const res = await apiRequest("CREATE", payload);
-            if (res && res.status === "Success") {
-                loadInventory();
-                document.querySelectorAll("#admin-controls input").forEach(i => i.value = "");
-            } else {
-                alert("Error: " + (res.error || "Check script permissions"));
-            }
-            btn.disabled = false;
-            btn.innerText = "Add to Inventory";
+            if (res.status === "Success") { loadInventory(); document.querySelectorAll("#admin-controls input").forEach(i => i.value = ""); }
+            else { alert("Error: " + res.error); }
         }
 
         async function deleteItem(id) {
-            if(confirm("Delete this item?")) {
-                await apiRequest("DELETE", { id });
-                loadInventory();
-            }
+            if(confirm("Delete item?")) { await apiRequest("DELETE", { id }); loadInventory(); }
         }
-        
-        function filterTable() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const rows = document.querySelectorAll('#inventory-list tr');
-    
-    // Skip the first row (headers)
-    for (let i = 1; i < rows.length; i++) {
-        const nameColumn = rows[i].cells[1].innerText.toLowerCase();
-        const supplierColumn = rows[i].cells[7].innerText.toLowerCase();
-        
-        if (nameColumn.includes(query) || supplierColumn.includes(query)) {
-            rows[i].style.display = "";
-        } else {
-            rows[i].style.display = "none";
-        }
-    }
-}
     </script>
 </body>
 </html>
