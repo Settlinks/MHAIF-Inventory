@@ -11,6 +11,7 @@
         .company-logo { max-width: 200px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
         .hidden { display: none; }
         .inventory-card { background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
+        
         #inventory-list { overflow-x: auto; border: 1px solid #eee; border-radius: 8px; margin-top: 10px; background: white; }
         table { width: 100%; border-collapse: collapse; min-width: 1000px; }
         th { background-color: var(--brand-color); color: white; padding: 12px; text-align: left; }
@@ -57,6 +58,12 @@
         </div>
 
         <div class="inventory-card">
+            <div class="inventory-card">
+    <input type="text" id="searchInput" placeholder="Search by name or supplier..." onkeyup="filterTable()">
+    <div id="inventory-list">
+        <p>Loading inventory...</p>
+    </div>
+</div>
             <div id="inventory-list">
                 <p>Loading inventory...</p>
             </div>
@@ -141,6 +148,23 @@
                 loadInventory();
             }
         }
+        
+        function filterTable() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('#inventory-list tr');
+    
+    // Skip the first row (headers)
+    for (let i = 1; i < rows.length; i++) {
+        const nameColumn = rows[i].cells[1].innerText.toLowerCase();
+        const supplierColumn = rows[i].cells[7].innerText.toLowerCase();
+        
+        if (nameColumn.includes(query) || supplierColumn.includes(query)) {
+            rows[i].style.display = "";
+        } else {
+            rows[i].style.display = "none";
+        }
+    }
+}
     </script>
 </body>
 </html>
